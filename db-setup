@@ -1,0 +1,53 @@
+#! /bin/bash
+if [ -z "$1" ]
+  then
+    echo "No File name given !!"
+    exit 1
+fi
+if [ -z "$2" ]
+  then
+    echo "No Database name given !!"
+    exit 1
+fi
+echo "########################## WARNING ########################################"
+echo "Existing Database $2 and filestore for $2 will be dropped"
+echo "###########################################################################"
+
+dropdb $2
+rm -r ~/.local/share/Odoo/filestore/$2
+createdb $2 --encoding=Unicode
+
+# dropdb $2
+# rm -r odoo-unzip
+
+mkdir odoodb-unziped
+cd odoodb-unziped
+
+echo "Extracting  $1 "
+unzip -o $1
+echo "Finished Extracting  $1 "
+
+echo "Setting up the filestore  for DB $s under ~/.local/share/Odoo/filestore/ "
+mv filestore ~/.local/share/Odoo/filestore/
+mv ~/.local/share/Odoo/filestore/filestore ~/.local/share/Odoo/filestore/$2
+echo "Moved file store to ~/.local/share/Odoo/filestore/$2"
+
+psql $2 < dump.sql
+
+cd ..
+rm -r odoodb-unziped
+
+echo "Cleaning Database :  $2"
+psql -c "UPDATE ir_cron SET active='False';" -d $2
+psql -c "UPDATE res_users SET login='admin',password='admin' WHERE id=1;" -d $2
+psql -c "UPDATE ir_config_parameter SET value='2040-01-01' WHERE key='database.expiration_date';" -d $2
+psql -c "UPDATE ir_ui_view SET active = 'f' WHERE id in (SELECT id FROM ir_ui_view WHERE  name like '%saas trial assets%');" -d $2
+
+echo "Database $2 is ready Administrator login with username & password : admin "
+
+
+# #Enable this to Switch odoo version 
+# cd ~/code/enterprise && git checkout $3 && git pull && find . -name \*.pyc -delete && git clean -fd
+# cd ~/code/design-themes && git checkout $3 && git pull && find . -name \*.pyc -delete && git clean -fd
+# cd ~/code/odoo && git checkout $3 && git pull && find . -name \*.pyc -delete && git clean -fd
+# cd ~/code/internal && git pull && find . -name \*.pyc -delete && git clean -fd
