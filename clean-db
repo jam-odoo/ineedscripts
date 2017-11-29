@@ -1,0 +1,9 @@
+#! /bin/bash
+if [ -z "$1" ]
+  then
+    echo "No database name given !!"
+    exit 1
+fi
+
+dropdb $1
+rm -r ~/.local/share/Odoo/filestore/$1
