@@ -4,17 +4,17 @@
 echo "************************************************************************************************"
 echo "        ~/code/odoo/$1  {checkout / pull / find-delete / clean}            "
 echo "************************************************************************************************"
-cd ~/code/odoo && git checkout $1 && git pull && find . -name \*.pyc -delete && git clean -fd
+cd ~/code/odoo && git checkout $1 && git pull && git checkout $1 && find . -name \*.pyc -delete && git clean -fd
 echo "************************************************************************************************"
 echo "       ~/code/enterprise/$1  {checkout / pull / find-delete / clean}       "
 echo "************************************************************************************************"
-cd ~/code/enterprise && git checkout $1 && git pull && find . -name \*.pyc -delete && git clean -fd
+cd ~/code/enterprise && git checkout $1 && git pull && git checkout $1 && find . -name \*.pyc -delete && git clean -fd
 echo "************************************************************************************************"
 echo "       ~/code/design-themes/$1  {checkout / pull / find-delete / clean}    "
 echo "************************************************************************************************"
-cd ~/code/design-themes && git checkout $1 && git pull && find . -name \*.pyc -delete && git clean -fd
+cd ~/code/design-themes && git checkout $1 && git pull && git checkout $1 && find . -name \*.pyc -delete && git clean -fd
 echo "************************************************************************************************"
 echo "       ~/code/internal  {checkout / pull / find-delete / clean}            "
 echo "************************************************************************************************"
-cd ~/code/internal && git pull && find . -name \*.pyc -delete && git clean -fd
+cd ~/code/internal && git pull  && git checkout master && find . -name \*.pyc -delete && git clean -fd
 echo "************************************************************************************************"
