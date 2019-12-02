@@ -1,20 +1,39 @@
 #! /bin/bash
+# Colors : http://www.lihaoyi.com/post/BuildyourownCommandLinewithANSIescapecodes.html
 
-#Switch odoo version
-echo "************************************************************************************************"
-echo "        ~/code/odoo/$1  {checkout / pull / find-delete / clean}            "
-echo "************************************************************************************************"
-cd ~/code/odoo && git checkout $1 && git pull && git checkout $1 && find . -name \*.pyc -delete && git clean -fd
-echo "************************************************************************************************"
-echo "       ~/code/enterprise/$1  {checkout / pull / find-delete / clean}       "
-echo "************************************************************************************************"
-cd ~/code/enterprise && git checkout $1 && git pull && git checkout $1 && find . -name \*.pyc -delete && git clean -fd
-echo "************************************************************************************************"
-echo "       ~/code/design-themes/$1  {checkout / pull / find-delete / clean}    "
-echo "************************************************************************************************"
-cd ~/code/design-themes && git checkout $1 && git pull && git checkout $1 && find . -name \*.pyc -delete && git clean -fd
-echo "************************************************************************************************"
-echo "       ~/code/internal  {checkout / pull / find-delete / clean}            "
-echo "************************************************************************************************"
-cd ~/code/internal && git pull  && git checkout master && find . -name \*.pyc -delete && git clean -fd
-echo "************************************************************************************************"
+BOLD="\u001b[1m"
+UNDERLINE="\u001b[4m"
+REVERSED="\u001b[7m"
+BLACK="\u001b[30;1m"
+RED="\033[1;31m"
+GREEN="\033[1;32m"
+YELLOW="\u001b[33;1m"
+BLUE="\u001b[34;1m"
+WHITE="\u001b[37;1m"
+RESET="\033[0m"
+
+SR_HOME=~/code
+switch_repos=odoo,enterprise,design-themes
+
+for repo in ${switch_repos//,/ }
+do
+   echo -e "${BOLD}${RED} ****** $SR_HOME/$repo to $1    {checkout . / find-delete / clean -fd / pull /  / clean}  ******  ${RESET}"
+   cd $SR_HOME/$repo
+   git checkout .
+   find . -name \*.pyc -delete
+   git clean -fd
+   git pull
+   git checkout origin/$1
+done
+
+pulltomaster_repos=internal,pass
+for repo in ${pulltomaster_repos//,/ }
+do
+   echo -e "${BOLD}${YELLOW} ****** $SR_HOME/$repo    {checkout . / find-delete / clean -fd / pull /  / clean}  ******  ${RESET}"
+   cd $SR_HOME/$repo
+   git checkout .
+   find . -name \*.pyc -delete
+   git clean -fd
+   git pull --all
+   git checkout origin/master
+done
