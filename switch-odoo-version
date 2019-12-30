@@ -1,4 +1,4 @@
-#! /bin/bash
+ #! /bin/bash
 # Colors : http://www.lihaoyi.com/post/BuildyourownCommandLinewithANSIescapecodes.html
 
 BOLD="\u001b[1m"
@@ -12,7 +12,7 @@ BLUE="\u001b[34;1m"
 WHITE="\u001b[37;1m"
 RESET="\033[0m"
 
-SR_HOME=~/code
+SR_HOME=~/source
 switch_repos=odoo,enterprise,design-themes
 
 for repo in ${switch_repos//,/ }
