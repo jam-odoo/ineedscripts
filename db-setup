@@ -20,8 +20,8 @@ createdb $2 --encoding=Unicode
 # dropdb $2
 # rm -r odoo-unzip
 
-mkdir odoodb-unziped
-cd odoodb-unziped
+# mkdir odoodb-unziped
+# cd odoodb-unziped
 
 echo "Attempting  Extraction of backup file : $1 "
 if [[ $1 == *.zip ]]
@@ -30,52 +30,54 @@ then
     echo "Finished extracting zip  $1 "
 elif [[ $1 == *.sql.gz ]]
 then
-    gunzip --keep $1
+    gunzip --force --keep $1
     echo "Finished extracting gunzip  $1 "
 else
     echo "Unknown file $1 requires manual extraction"
-    cd ..
-    rm -r odoodb-unziped
+    # cd ..
+    # rm -r odoodb-unziped
     exit 1
 fi
 
 
-if [[ $1 == *.zip ]]
-then
+if [[ $1 == *.zip ]]; then
     echo "Setting up the filestore  for DB $s under ~/.local/share/Odoo/filestore/ "
     mv filestore ~/.local/share/Odoo/filestore/
     mv ~/.local/share/Odoo/filestore/filestore ~/.local/share/Odoo/filestore/$2
     echo "Moved file store to ~/.local/share/Odoo/filestore/$2"
     psql $2 < dump.sql
-elif [[ $1 == *.sql.gz ]]
-then
+    rm -f dump.sql
+    # cd ..
+    # rm -r odoodb-unziped
+elif [[ $1 == *.sql.gz ]]; then
     backup_name="$(echo "$1" | cut -f 1 -d '.').sql"
+    echo "Restroing dump => $backup_name"
     psql $2 < $backup_name
+    echo "Removing  dump file => $backup_name"
+    rm -f $backup_name
 else
     echo "Unknown file $1 requires manual extraction"
-    cd ..
-    rm -r odoodb-unziped
     exit 1
 fi
 
-cd ..
-rm -r odoodb-unziped
+# cd ..
+# rm -r odoodb-unziped
 
 uuid=$(uuidgen)
-echo "Cleaning Database :  $1"
-psql -c "UPDATE ir_cron SET active='f';" -d $1
-psql -c "UPDATE ir_mail_server SET active='f';" -d $1
-psql -c "UPDATE res_users SET login='admin',password='admin',active='t' WHERE id=1;" -d $1
-psql -c "UPDATE res_users SET login='admin2',password='admin',active='t' WHERE id=2;" -d $1
-psql -c "UPDATE res_users SET login='admin',password=null,active='t',password_crypt='\$pbkdf2-sha512\$25000\$WqsVQiiFkJIyxnjPmTPGGA\$wFyWXkZTOzKD5ZXttnJUuaVJJeLiYRpk5Rf06N6QpH8c7KHGof9OSzjlv4EJLi3U.rxe.ag4QuEPSA7oW6F6Bg' WHERE id=1;" -d $1
-psql -c "UPDATE res_users SET login='admin2',password=null,active='t',password_crypt='\$pbkdf2-sha512\$25000\$WqsVQiiFkJIyxnjPmTPGGA\$wFyWXkZTOzKD5ZXttnJUuaVJJeLiYRpk5Rf06N6QpH8c7KHGof9OSzjlv4EJLi3U.rxe.ag4QuEPSA7oW6F6Bg' WHERE id=2;" -d $1
-psql -c "UPDATE ir_config_parameter SET value = '2040-01-01 00:00:00' WHERE key = 'database.expiration_date';" -d $1
-psql -c "UPDATE ir_config_parameter SET value = '$uuid' WHERE key = 'database.uuid';" -d $1
-psql -c "UPDATE ir_ui_view SET active = 'f' WHERE id in (SELECT id FROM ir_ui_view WHERE  name like '%saas trial assets%');" -d $1
-psql -c "DELETE FROM ir_attachment WHERE name like '%assets_%';" -d $1
+echo "Cleaning Database :  $2"
+psql -c "UPDATE ir_cron SET active='f';" -d $2
+psql -c "UPDATE ir_mail_server SET active='f';" -d $2
+psql -c "UPDATE res_users SET login='admin',password='admin',active='t' WHERE id=1;" -d $2
+psql -c "UPDATE res_users SET login='admin2',password='admin',active='t' WHERE id=2;" -d $2
+psql -c "UPDATE res_users SET login='admin',password=null,active='t',password_crypt='\$pbkdf2-sha512\$25000\$WqsVQiiFkJIyxnjPmTPGGA\$wFyWXkZTOzKD5ZXttnJUuaVJJeLiYRpk5Rf06N6QpH8c7KHGof9OSzjlv4EJLi3U.rxe.ag4QuEPSA7oW6F6Bg' WHERE id=1;" -d $2
+psql -c "UPDATE res_users SET login='admin2',password=null,active='t',password_crypt='\$pbkdf2-sha512\$25000\$WqsVQiiFkJIyxnjPmTPGGA\$wFyWXkZTOzKD5ZXttnJUuaVJJeLiYRpk5Rf06N6QpH8c7KHGof9OSzjlv4EJLi3U.rxe.ag4QuEPSA7oW6F6Bg' WHERE id=2;" -d $2
+psql -c "UPDATE ir_config_parameter SET value = '2040-01-01 00:00:00' WHERE key = 'database.expiration_date';" -d $2
+psql -c "UPDATE ir_config_parameter SET value = '$uuid' WHERE key = 'database.uuid';" -d $2
+psql -c "UPDATE ir_ui_view SET active = 'f' WHERE id in (SELECT id FROM ir_ui_view WHERE  name like '%saas trial assets%');" -d $2
+psql -c "DELETE FROM ir_attachment WHERE name like '%assets_%';" -d $2
 
 
-echo "Database $1 is ready Administrator login with username & password : admin (<= v11) and if admin2 (>= v12) and password admin"
+echo "Database $2 is ready Administrator login with username & password : admin (<= v11) and if admin2 (>= v12) and password admin"
 
     
 # #Enable this to Switch odoo version 
