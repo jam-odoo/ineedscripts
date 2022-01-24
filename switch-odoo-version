@@ -26,7 +26,7 @@ do
    git checkout origin/$1
 done
 
-pulltomaster_repos=internal,pass
+pulltomaster_repos=internal,pass,support-tools
 for repo in ${pulltomaster_repos//,/ }
 do
    echo -e "${BOLD}${YELLOW} ****** $SR_HOME/$repo    {checkout . / find-delete / clean -fd / pull /  / clean}  ******  ${RESET}"
